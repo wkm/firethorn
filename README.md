@@ -115,6 +115,7 @@ In theory the data schema could be implicitly derived from data insertions and q
 ### Redis Instances: Replication, Partitioning, and Sampling
 
 ```json
+<<<<<<< HEAD
 	"storage": {
 		"samplingfactor": 1,
 		"redundancy": 2,
