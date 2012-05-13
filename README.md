@@ -91,6 +91,7 @@ There are four aspects to configuring Firethorn:
 In theory the data schema could be implicitly derived from data insertions and queries. However, the subtleties of reconstructing keys and the exponential explosion in keys as dimensions are added seem like potential problems. So we require a data schema to be specified in the configuration:
 
 ```json
+{
 	"dimensions": {
 		"time": {
 			"id": 0,
@@ -108,6 +109,7 @@ In theory the data schema could be implicitly derived from data insertions and q
 			"schema": ["likes", "follows", "reblogs", "views"]
 		}
 	}
+}
 ```
 
 
@@ -115,7 +117,7 @@ In theory the data schema could be implicitly derived from data insertions and q
 ### Redis Instances: Replication, Partitioning, and Sampling
 
 ```json
-<<<<<<< HEAD
+{
 	"storage": {
 		"samplingfactor": 1,
 		"redundancy": 2,
@@ -133,6 +135,7 @@ In theory the data schema could be implicitly derived from data insertions and q
 			]
 		]
 	}
+}
 ```
 
 
@@ -141,8 +144,10 @@ In theory the data schema could be implicitly derived from data insertions and q
 Finally, as a service there are a few configurable things:
 
 ```json
+{
 	"pidfile": "/var/run/firethorn_01.pid",
 	"logdir": "/var/log/firethorn_01/"
+}
 ```
 
 
