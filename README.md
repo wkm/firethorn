@@ -4,12 +4,12 @@ A high availability, scalable, redis-backed counter service written in Go that o
 The trick of firethorn is randomly choosing a node to accept a counter operation. In this way write throughput scales linearly with the number of nodes in the pool. Reads can either be estimates: by reading from a single node and multiplying by the number of nodes in the pool, or reads can be near exact by reading from all nodes and summing. At the same time, counts are effectively replicated across multiple redis instances.
 
 ## Drawbacks
-* Data jitter: multiple requests are going to give slightly jittered results (where the values are sometimes more, sometimes less). This is particularly an issue for historical data which isn't being modified anymore.
+* Data jitter: multiple requests are going to give slightly jittered results (where the values are sometimes more, sometimes less). This is particularly an issue for historical data which isn"t being modified anymore.
 * Not "elastic": 
 
 
 ## Data Model
-The basic datamodel is similar to Twitter's Rainbird hiearchical keys. However, Firethorn also supports multi-dimensional keys.
+The basic datamodel is similar to Twitter"s Rainbird hiearchical keys. However, Firethorn also supports multi-dimensional keys.
 
 For example, to increment the number of likes for a particular post:
 
@@ -96,18 +96,18 @@ In theory the data schema could be implicitly derived from data insertions and q
 	dimensions: {
 		time: {
 			id: 0,
-			key: 't',
+			key: "t",
 			schema: "#/#/#/#/#/#"
 		},
 		client: {
 			id: 100,
-			key: 'c',
+			key: "c",
 			schema: "#/#"
 		},
 		activity: {
 			id: 200,
-			key: 'a',
-			schema: ['likes', 'follows', 'reblogs', 'views']
+			key: "a",
+			schema: ["likes", "follows", "reblogs", "views"]
 		}
 	},
 	// ...
@@ -124,17 +124,17 @@ In theory the data schema could be implicitly derived from data insertions and q
 	storage: {
 		samplingfactor: 1,
 		redundancy: 2,
-		sharding: 'hashing',
+		sharding: "hashing",
 		pools: [
 			[
-				'redis01:6379' : {},
-				'redis01:6380' : {},
-				'redis01:6381' : {}
+				"redis01:6379" : {},
+				"redis01:6380" : {},
+				"redis01:6381" : {}
 			],
 			[
-				'redis02:6379' : {},
-				'redis02:6380' : {},
-				'redis02:6381' : {}
+				"redis02:6379" : {},
+				"redis02:6380" : {},
+				"redis02:6381" : {}
 			]
 		]
 	}
@@ -150,8 +150,8 @@ Finally, as a service there are a few configurable things:
 ```json
 {
 	// ...
-	pidfile: '/var/run/firethorn_01.pid',
-	logdir: '/var/log/firethorn_01/'
+	pidfile: "/var/run/firethorn_01.pid",
+	logdir: "/var/log/firethorn_01/"
 	// ...
 }
 ```
