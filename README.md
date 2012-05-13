@@ -77,15 +77,15 @@ A sample output:
 	},
 	"data": [123123],
 	"stats": {
-		"millis": 12,
-		"keys": 1231,
-		"instanceCount": 18
+		"millis": 1,
+		"keys": 1,
+		"instanceCount": 1
 	}
 }
 ```
 
 ## Configuration
-There are four aspects to configuring Firethorn:
+Firethorn configuration is written in JSON as four components:
 
 ### Data Schema
 In theory the data schema could be implicitly derived from data insertions and queries. However, the subtleties of reconstructing keys and the exponential explosion in keys as dimensions are added seem like potential problems. So we require a data schema to be specified in the configuration:
@@ -153,9 +153,12 @@ Finally, as a service there are a few configurable things:
 
 ## API
 ### Writing
-The fundamental operation in firethorn is an increment against multiple counters.
+The fundamental operation in firethorn is an increment against multiple counters. This is executed as a POST request against a firethorn endpoint:
+
+	curl '127.0.0.1:8000'
 
 ### Reading
+Reading is executed as a GET operation against a firethorn endpoint:
 
 
 ## Development

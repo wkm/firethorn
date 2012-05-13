@@ -14,11 +14,11 @@ func TestService(t *testing.T) {
 	println("dialing redis...")
 	ports := [3]int{6379, 6380, 6381}
 
-	conns := [len(ports)]redis.Conn{}
+	conns := [len(ports)]*redis.Conn{}
 
 	for i := 0; i < len(ports); i++ {
 		addr := fmt.Sprintf("localhost:%d", ports[i])
-		println("   %s", addr)
+		fmt.Printf("   %s\n", addr)
 
 		conn, err := redis.Dial(addr)
 
@@ -27,12 +27,6 @@ func TestService(t *testing.T) {
 		}
 
 		conns[i] = conn
-	}
-
-	conn := [3]redis.Conn{
-		redis.Dial("localhost:6379"),
-		redis.Dial("localhost:6380"),
-		redis.Dial("localhost:6381"),
 	}
 	println("   ... picked up")
 
