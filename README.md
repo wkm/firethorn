@@ -123,16 +123,16 @@ In theory the data schema could be implicitly derived from data insertions and q
 		"redundancy": 2,
 		"sharding": "hashing",
 		"pools": [
-			[
+			{
 				"redis01:6379" : {},
 				"redis01:6380" : {},
 				"redis01:6381" : {}
-			],
-			[
+			},
+			{
 				"redis02:6379" : {},
 				"redis02:6380" : {},
 				"redis02:6381" : {}
-			]
+			}
 		]
 	}
 }
