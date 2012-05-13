@@ -87,7 +87,7 @@ A sample output:
 ## Configuration
 Firethorn configuration is written in JSON as four components:
 
-### Data Schema
+### Data Schemas
 In theory the data schema could be implicitly derived from data insertions and queries. However, the subtleties of reconstructing keys and the exponential explosion in keys as dimensions are added seem like potential problems. So we require a data schema to be specified in the configuration:
 
 ```json
@@ -120,7 +120,6 @@ In theory the data schema could be implicitly derived from data insertions and q
 {
 	"storage": {
 		"samplingfactor": 1,
-		"redundancy": 2,
 		"sharding": "hashing",
 		"pools": [
 			{

@@ -1,4 +1,4 @@
-package firethorn
+package main
 
 import (
 	"log"

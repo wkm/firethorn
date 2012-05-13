@@ -1,0 +1,41 @@
+{
+	"ListenAddress": ":8080",
+
+	"Schemas": {
+		"postactivity": {
+			"Dimensions": {
+				"time": {
+					"Id": 0,
+					"Key": "t",
+					"Hierarchy": "#/#/#/#/#/#"
+				},
+				"client": {
+					"Id": 100,
+					"Key": "c",
+					"Hierarchy": "#/#"
+				},
+				"activity": {
+					"Id": 200,
+					"Key": "a",
+					"Enums": ["likes", "follows", "reblogs", "views"]
+				}
+			}
+		}
+	},
+
+	"Storage": {
+		"SamplingFactor": 1,
+		"Sharding": "hashing",
+		"Pools": [
+			{
+				"127.0.0.1:6379": {}
+			},
+			{
+				"127.0.0.1:6380": {}
+			},
+			{
+				"127.0.0.1:6381": {}
+			}
+		]
+	}
+}
