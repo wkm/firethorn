@@ -72,14 +72,14 @@ A sample output:
 
 ```json
 {
-	dimensions: {
-		client: [456]
+	"dimensions": {
+		"client": [456]
 	},
-	data: [123123],
-	stats: {
-		millis: 12,
-		keys: 1231,
-		instances: xxxx
+	"data": [123123],
+	"stats": {
+		"millis": 12,
+		"keys": 1231,
+		"instances": xxxx
 	}
 }
 ```
@@ -92,25 +92,25 @@ In theory the data schema could be implicitly derived from data insertions and q
 
 ```json
 {
-	// ...
-	dimensions: {
-		time: {
+	/* ... */
+	"dimensions": {
+		"time": {
 			id: 0,
 			key: "t",
 			schema: "#/#/#/#/#/#"
 		},
-		client: {
-			id: 100,
-			key: "c",
-			schema: "#/#"
+		"client": {
+			"id": 100,
+			"key": "c",
+			"schema": "#/#"
 		},
-		activity: {
-			id: 200,
-			key: "a",
-			schema: ["likes", "follows", "reblogs", "views"]
+		"activity: {
+			"id: 200,
+			"key": "a",
+			"schema": ["likes", "follows", "reblogs", "views"]
 		}
 	},
-	// ...
+	/* ... */
 }
 ```
 
@@ -120,12 +120,12 @@ In theory the data schema could be implicitly derived from data insertions and q
 
 ```json
 {
-	// ...
-	storage: {
-		samplingfactor: 1,
-		redundancy: 2,
-		sharding: "hashing",
-		pools: [
+	/* ... */
+	"storage": {
+		"samplingfactor": 1,
+		"redundancy": 2,
+		"sharding": "hashing",
+		"pools": [
 			[
 				"redis01:6379" : {},
 				"redis01:6380" : {},
@@ -138,7 +138,7 @@ In theory the data schema could be implicitly derived from data insertions and q
 			]
 		]
 	}
-	// ...
+	/* ... */
 }
 ```
 
@@ -149,10 +149,10 @@ Finally, as a service there are a few configurable things:
 
 ```json
 {
-	// ...
-	pidfile: "/var/run/firethorn_01.pid",
-	logdir: "/var/log/firethorn_01/"
-	// ...
+	/* ... */
+	"pidfile": "/var/run/firethorn_01.pid",
+	"logdir": "/var/log/firethorn_01/"
+	/* ... */
 }
 ```
 
