@@ -79,7 +79,7 @@ A sample output:
 	"stats": {
 		"millis": 12,
 		"keys": 1231,
-		"instances": xxxx
+		"instanceCount": 18
 	}
 }
 ```
@@ -103,7 +103,7 @@ In theory the data schema could be implicitly derived from data insertions and q
 			"key": "c",
 			"schema": "#/#"
 		},
-		"activity: {
+		"activity": {
 			"id": 200,
 			"key": "a",
 			"schema": ["likes", "follows", "reblogs", "views"]
