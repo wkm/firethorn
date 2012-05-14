@@ -9,8 +9,8 @@ If a redis instance is lost, it can be directly replicated from one of its peers
 * Data jitter: multiple requests are going to give slightly jittered results (where the values are sometimes more, sometimes less). The jitter should be insignificant for all but the smallest counts. This is particularly an issue for historical data which isn't being modified anymore.
 * Not "elastic": Firethorn does not in any way automatically scale up or down as machines are added to the cluster.
 * Relatively expensive space wise:
-    * the sharding scheme is conceptually similar to a RAID 0+1. Double the memory is required to maintain the same number of schemes. This is natural with replication, the benefit of Firethorn is the resulting increase in performance for reads and writes as well.
-    * the OLAP data model increases the number of keys required per insert quadratically (the number of keys per insert is equal to the product of, for each dimension, the precision of the dimension plus one)
+    * the sharding scheme is conceptually similar to a RAID 0+1. Double the memory is required to maintain the same number of data points. This is natural with replication, the benefit of Firethorn is the resulting increase in performance for reads and writes as well.
+    * the OLAP data model increases the number of keys required per insert exponentially on the number of dimensions (the number of keys per insert is equal to the product of, for each dimension, the precision of the dimension plus one)
 
 
 ## Data Model
@@ -26,6 +26,11 @@ This lets us construct the following queries:
 
 ### Constructing Queries
 
+All activity over all time for all clients: [empty query]
+
+```
+
+```
 
 The count of all activity over all time for a client:
 
