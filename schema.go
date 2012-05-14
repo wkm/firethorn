@@ -37,6 +37,12 @@ func (s *Schema) InsertKeyCount(i *Insert) uint {
 	return count
 }
 
+// creates a generator that iteratively creates all keys referenced in an
+// insert
+func (s *Schema) InsertKeyIterator(i *Insert) []string {
+
+}
+
 // computes the number of keys referenced by a query
 func (s *Schema) QueryKeyCount(q *Query) uint {
 
