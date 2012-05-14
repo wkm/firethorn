@@ -38,10 +38,10 @@ func main() {
 		log.Fatalf("Could not parse configuration %s: %s", *configFile, err)
 	}
 
-	// seed the PNRG used by firethorn to distribute requests
+	// seed the PNRG used by firethorn to distribute requests across pools
 	rand.Seed(time.Now().Unix())
 
-	http.HandleFunc("/get", GetCounter)
+	http.HandleFunc("/", GetCounter)
 	http.HandleFunc("/set", SetCounter)
 
 	log.Printf("Starting Firethorn on %s", config.ListenAddress)

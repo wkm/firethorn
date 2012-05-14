@@ -7,8 +7,7 @@ import (
 )
 
 type Service struct {
-	retries int           // maximum retries
-	pool    []redis.Redis // connection pool
+	pool []redis.Redis // connection pool
 }
 
 // increment the given key

@@ -1,11 +1,16 @@
 # Firethorn
 A high availability, scalable, redis-backed counter service written in Go that offers a tradeoff between read and write performance and (slight) inaccuracy.
 
-The trick of firethorn is randomly choosing a node to accept a counter operation. In this way write throughput scales linearly with the number of nodes in the pool. Reads can either be estimates: by reading from a single node and multiplying by the number of nodes in the pool, or reads can be near exact by reading from all nodes and summing. At the same time, counts are effectively replicated across multiple redis instances.
+The trick of firethorn is randomly choosing a node to accept an incr/decr operation. In this way write throughput scales linearly with the number of nodes in the pool. Reads can either be estimates: by reading from a single node and multiplying by the number of nodes in the pool, or reads can be near exact by reading from all nodes and summing. At the same time, counts are effectively replicated across multiple redis instances.
+
+If a redis instance is lost, it can be directly replicated from one of its peers. In the interim Firethorn effectively samples.
 
 ## Drawbacks
-* Data jitter: multiple requests are going to give slightly jittered results (where the values are sometimes more, sometimes less). This is particularly an issue for historical data which isn"t being modified anymore.
-* Not "elastic": 
+* Data jitter: multiple requests are going to give slightly jittered results (where the values are sometimes more, sometimes less). The jitter should be insignificant for all but the smallest counts. This is particularly an issue for historical data which isn't being modified anymore.
+* Not "elastic": Firethorn does not in any way automatically scale up or down as machines are added to the cluster.
+* Relatively expensive space wise:
+    * the sharding scheme is conceptually similar to a RAID 0+1. Double the memory is required to maintain the same number of schemes. This is natural with replication, the benefit of Firethorn is the resulting increase in performance for reads and writes as well.
+    * the OLAP data model increases the number of keys required per insert quadratically (the number of keys per insert is equal to the product of, for each dimension, the precision of the dimension plus one)
 
 
 ## Data Model
@@ -13,9 +18,9 @@ The basic datamodel is similar to Twitter"s Rainbird hiearchical keys. However, 
 
 For example, to increment the number of likes for a particular post:
 
-    time:2012/5/13/14/22
-    client:123/123123123
-    activity:likes
+    time=2012/5/13/14/22
+    client=123/123123123
+    activity=likes
 
 This lets us construct the following queries:
 
@@ -31,7 +36,7 @@ Per-day counters for all activity for a client:
 	client=456
 	time=2012/5/0..31
 
-Per-month counters for all like activity for a client in May and June 2012:
+Per-month counters for all like activity for all posts for a client in May and June 2012:
 
 	client=456
 	time=2012/5..6
@@ -60,6 +65,8 @@ Same, but for four posts from two clients:
 	client=456/123123,789789;489/1231,32452
 	time=2012/5..7/0..31
 	activity=likes|reblogs
+
+You could remove the client constraint in any of these queries to get aggregates across all clients.
 
 ### Output Format
 Output is in JSON containing:
@@ -116,9 +123,12 @@ In theory the data schema could be implicitly derived from data insertions and q
 
 ### Redis Instances: Replication, Partitioning, and Sampling
 
+The primary feature of the redis configuration is a specification of the individual pools.
+
 ```json
 {
 	"storage": {
+		"errorRateThreshold": 15,
 		"samplingfactor": 1,
 		"sharding": "hashing",
 		"pools": [
@@ -175,5 +185,6 @@ Otherwise Firethorn is a normal golang project:
 
 
 ## To-dos
+* redis instances should be allowed to filter by dimensions; this will allow horizontal capacity scaling
 * http stats endpoint ("gostrich")
 * archived data compression
