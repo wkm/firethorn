@@ -3,7 +3,7 @@ A high availability, scalable, redis-backed counter service written in Go that o
 
 The trick of firethorn is randomly choosing a node to accept an incr/decr operation. In this way write throughput scales linearly with the number of nodes in the pool. Reads can either be estimates: by reading from a single node and multiplying by the number of nodes in the pool, or reads can be near exact by reading from all nodes and summing. At the same time, counts are effectively replicated across multiple redis instances.
 
-If a redis instance is lost, it can be directly replicated from one of its peers. In the interim Firethorn effectively samples.
+If a redis instance is lost, it can be directly replicated from one of its peers. In the interim Firethorn effectively samples by silently failing writes to the failed pool.
 
 ## Drawbacks
 * Data jitter: multiple requests are going to give slightly jittered results (where the values are sometimes more, sometimes less). The jitter should be insignificant for all but the smallest counts. This is particularly an issue for historical data which isn't being modified anymore.
@@ -14,7 +14,7 @@ If a redis instance is lost, it can be directly replicated from one of its peers
 
 
 ## Data Model
-The basic datamodel is similar to Twitter"s Rainbird hiearchical keys. However, Firethorn also supports multi-dimensional keys.
+The basic datamodel is similar to Twitter"s Rainbird hiearchical keys with the addition of multiple dimensions.
 
 For example, to increment the number of likes for a particular post:
 
@@ -84,15 +84,15 @@ A sample output:
 
 ```json
 {
+	"schema": "activity",
+	"millis": 1,
+	"keysReferenced": 1,
+	"instanceCount": 1,
+	"missings": 0,
 	"dimensions": {
 		"client": [456]
 	},
-	"data": [123123],
-	"stats": {
-		"millis": 1,
-		"keys": 1,
-		"instanceCount": 1
-	}
+	"data": [123123]
 }
 ```
 
@@ -155,7 +155,7 @@ The primary feature of the redis configuration is a specification of the individ
 
 ### Administration
 
-Finally, as a service there are a few configurable things:
+Finally, as a service there are a few configurable settings:
 
 ```json
 {

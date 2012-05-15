@@ -16,6 +16,7 @@ type Insert struct {
 	Delta      int
 	Dimensions [][]string
 }
+type InsertKeyGenerator []uint
 
 type Query struct {
 }
@@ -39,8 +40,13 @@ func (s *Schema) InsertKeyCount(i *Insert) uint {
 
 // creates a generator that iteratively creates all keys referenced in an
 // insert
-func (s *Schema) InsertKeyIterator(i *Insert) []string {
+func (ins *Insert) KeyGenerator() InsertKeyGenerator {
+	return InsertKeyGenerator(make(int, len(ins.Dimensions)))
+}
 
+// gives the next insert key; there is no protection against overflow
+func (igen *InsertKeyGenerator) NextKey() string {
+	
 }
 
 // computes the number of keys referenced by a query
@@ -51,6 +57,6 @@ func (s *Schema) QueryKeyCount(q *Query) uint {
 // creates a generator that iteratively creates all keys referenced
 // in the execution of a query. Keys are generated depth-first on each
 // dimension, starting from the dimension with the highest index
-func (s *Schema) QueryKeyIterator(q *Query) []string {
+func (s *Schema) QueryKeyGenerator(q *Query) []string {
 
 }
