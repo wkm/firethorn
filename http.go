@@ -10,7 +10,7 @@ func ParseInsert(query string) []Query {
 	queries := make([]Query, len(queryStrings))
 
 	for _, query := range queryStrings {
-
+		print("parsing query: " + query)
 	}
 
 	return queries

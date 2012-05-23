@@ -17,7 +17,8 @@ import (
 )
 
 var (
-	configFile = flag.String("config", "", "firethorn configuration")
+	configFileValue = ""
+	configFile      = &configFileValue //flag.String("config", "", "firethorn configuration")
 )
 
 func main() {

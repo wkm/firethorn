@@ -1,5 +1,9 @@
 package main
 
+import (
+	"bytes"
+)
+
 type Schema struct {
 	Dimensions map[string]Dimension
 }
@@ -20,6 +24,7 @@ type InsertKeyGenerator []uint
 
 type Query struct {
 }
+type QueryKeyGenerator []uint
 
 // computes the number of keys referenced in an insert
 func (s *Schema) InsertKeyCount(i *Insert) uint {
@@ -41,22 +46,66 @@ func (s *Schema) InsertKeyCount(i *Insert) uint {
 // creates a generator that iteratively creates all keys referenced in an
 // insert
 func (ins *Insert) KeyGenerator() InsertKeyGenerator {
-	return InsertKeyGenerator(make(int, len(ins.Dimensions)))
+	return InsertKeyGenerator(make([]uint, len(ins.Dimensions)))
 }
 
-// gives the next insert key; there is no protection against overflow
-func (igen *InsertKeyGenerator) NextKey() string {
-	
+// updates the generator to give the next key on GetKey
+func (igen *InsertKeyGenerator) NextKey(insert Insert) *InsertKeyGenerator {
+	// start at the first dimension, increment
+	(*igen)[0]++
+
+	// now iterate over the rest, resolving overflows
+	lastOverflow := -1
+	for i := range insert.Dimensions {
+		if (*igen)[i] <= uint(len(insert.Dimensions[i])) {
+			break
+		} else {
+			(*igen)[i+1]++
+			lastOverflow = i
+		}
+	}
+
+	// zero out up to the overflow
+	for i := 0; i <= lastOverflow; i++ {
+		(*igen)[i] = 0
+	}
+
+	return igen
+}
+
+func (igen *InsertKeyGenerator) GetKey(insert Insert) string {
+	var buff bytes.Buffer
+
+	var needDot = false
+	for dimindx, dist := range *igen {
+		// check dist to not write '.' by themselves for zero'd
+		// dimensions
+		if dist > 0 && needDot {
+			buff.WriteByte(byte('.'))
+			needDot = false
+		}
+
+		for i := 0; i < int(dist); i++ {
+			buff.WriteString(insert.Dimensions[dimindx][i])
+			needDot = true
+
+			if i < int(dist)-1 {
+				buff.WriteByte(byte('/'))
+			}
+		}
+	}
+
+	return buff.String()
 }
 
 // computes the number of keys referenced by a query
 func (s *Schema) QueryKeyCount(q *Query) uint {
-
+	return 0
 }
 
 // creates a generator that iteratively creates all keys referenced
 // in the execution of a query. Keys are generated depth-first on each
 // dimension, starting from the dimension with the highest index
 func (s *Schema) QueryKeyGenerator(q *Query) []string {
-
+	return []string{}
 }
