@@ -9,12 +9,12 @@ If a redis instance is lost, it can be directly replicated from one of its peers
 * Data jitter: multiple requests are going to give slightly jittered results (where the values are sometimes more, sometimes less). The jitter should be insignificant for all but the smallest counts. This is particularly an issue for historical data which isn't being modified anymore.
 * Not "elastic": Firethorn does not in any way automatically scale up or down as machines are added to the cluster.
 * Relatively expensive space wise:
-    * the sharding scheme is conceptually similar to a RAID 0+1. Double the memory is required to maintain the same number of data points. This is natural with replication, the benefit of Firethorn is the resulting increase in performance for reads and writes as well.
+    * the sharding scheme is conceptually similar to a RAID 0+1. Double the memory is required to maintain the same number of data points. This is natural with replication, the benefit of Firethorn is the resulting performance increase for reads and writes.
     * the OLAP data model increases the number of keys required per insert exponentially on the number of dimensions (the number of keys per insert is equal to the product of, for each dimension, the precision of the dimension plus one)
 
 
 ## Data Model
-The basic datamodel is similar to Twitter"s Rainbird hiearchical keys with the addition of multiple dimensions.
+The basic datamodel is similar to Twitter's Rainbird hiearchical keys with the addition of multiple dimensions.
 
 For example, to increment the number of likes for a particular post:
 
@@ -73,6 +73,11 @@ Same, but for four posts from two clients:
 
 You could remove the client constraint in any of these queries to get aggregates across all clients.
 
+#### Query format
+[need to flesh out]
+* `---` to seperate multiple queries and inserts
+* ` 
+
 ### Output Format
 Output is in JSON containing:
 
@@ -88,7 +93,12 @@ A sample output:
 	"millis": 1,
 	"keysReferenced": 1,
 	"instanceCount": 1,
+	"queryCount": 1,
 	"missings": 0,
+	"error": {
+		".0001": 5,
+		".001": 1
+	},
 	"dimensions": {
 		"client": [456]
 	},
@@ -96,11 +106,21 @@ A sample output:
 }
 ```
 
+* `schema` -- the namespace for this keyset
+* `millis` -- time spent on the server aggregating the result set
+* `keysReferenced` -- the number of keys which were queried
+* `instanceCount` -- the number of redis instances reached
+* `queryCount` -- the number of redis queries evaluated
+* `missings` -- the number of missing data points
+* `error` -- [XXXX]
+* `dimensions` -- the axes ticks for each dimension of result
+* `data` -- a multi-dimensional array of return values
+
 ## Configuration
 Firethorn configuration is written in JSON as four components:
 
 ### Data Schemas
-In theory the data schema could be implicitly derived from data insertions and queries. However, the subtleties of reconstructing keys and the exponential explosion in keys as dimensions are added seem like potential problems. So we require a data schema to be specified in the configuration:
+In theory the data schema could be implicitly derived from data insertions and queries. However, the subtleties of reconstructing keys and the exponential explosion in keys across dimensions suggest some rigor would be beneficial. So we require a data schema to be specified in the configuration:
 
 ```json
 {
@@ -152,6 +172,8 @@ The primary feature of the redis configuration is a specification of the individ
 }
 ```
 
+Firethorn's random selection model operates on pools. That is, each operation will randomly choose a pool to execute against. Within a pool, operations are sharded against the instances within that pool using the chosen sharding algorithm. (hashing, basically) It's possible to have heterogenous pools, but the complexity dosen't seem worth it.
+
 
 ### Administration
 
@@ -160,7 +182,7 @@ Finally, as a service there are a few configurable settings:
 ```json
 {
 	"pidfile": "/var/run/firethorn_01.pid",
-	"logdir": "/var/log/firethorn_01/"
+	"logdir": "7 /var/log/firethorn_01/"
 }
 ```
 
@@ -192,4 +214,4 @@ Otherwise Firethorn is a normal golang project:
 ## To-dos
 * redis instances should be allowed to filter by dimensions; this will allow horizontal capacity scaling
 * http stats endpoint ("gostrich")
-* archived data compression
+* compress archived data

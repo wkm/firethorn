@@ -1,4 +1,4 @@
-package main
+package firethorn
 
 import (
 	"github.com/bmizerany/assert"

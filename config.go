@@ -8,7 +8,7 @@
 	}
 */
 
-package main
+package firethorn
 
 type Config struct {
 	// administration
